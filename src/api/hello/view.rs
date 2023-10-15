@@ -5,6 +5,7 @@ use super::schema;
 
 pub async fn hello() -> &'static str {
     tracing::info!("hello");
+    tracing::error!("errors is");
     "Hello, World!"
 }
 
