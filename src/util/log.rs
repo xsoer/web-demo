@@ -1,5 +1,5 @@
 use tracing_subscriber::prelude::*;
-use tracing_appender::{rolling};
+use tracing_appender::rolling;
 
 pub fn init() {
     let info_file = rolling::daily("log", "info");
