@@ -1,37 +1,41 @@
-use tracing_subscriber::prelude::*;
+use tracing::Level;
 use tracing_appender::rolling;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
+use tracing_subscriber::EnvFilter;
+
+struct LocalTimer;
+
+const fn east8() -> Option<chrono::FixedOffset> {
+    chrono::FixedOffset::east_opt(8 * 3600)
+}
+
+impl FormatTime for LocalTimer {
+    fn format_time(&self, w: &mut Writer<'_>) -> std::fmt::Result {
+        let now = chrono::Utc::now().with_timezone(&east8().unwrap());
+        write!(w, "{}", now.format("%FT%T%.3f"))
+    }
+}
 
 pub fn init() {
     let info_file = rolling::daily("log", "info");
-    let err_file = rolling::daily("log", "error").with_max_level(tracing::Level::ERROR);
+    let err_file = rolling::daily("log", "error").with_max_level(Level::ERROR);
     let all_files = info_file.and(err_file);
 
-    tracing_subscriber::fmt()
+    let env_layer = EnvFilter::from_default_env().add_directive(Level::TRACE.into());
+    let stdout_layer = tracing_subscriber::fmt::layer()
+        .pretty()
+        .with_timer(LocalTimer);
+    let file_layer = tracing_subscriber::fmt::layer()
         .with_writer(all_files)
+        .with_target(true)
         .with_line_number(true)
-        .with_ansi(false)
-        // .with_max_level(tracing::Level::TRACE)
-    .init();
+        .with_timer(LocalTimer)
+        .with_ansi(false);
 
-
-    // let stdout_log = tracing_subscriber::fmt::layer().pretty();
-    // let file_appender = tracing_appender::rolling::daily("log", "web-demo.log");
-    // let log_layer = tracing_subscriber::fmt::layer().with_writer(file_appender);
-    //
-    //
-    // tracing_subscriber::registry()
-    //     .with(
-    //         stdout_log
-    //             // Add an `INFO` filter to the stdout logging layer
-    //             .with_filter(filter::LevelFilter::INFO)
-    //             // Combine the filtered `stdout_log` layer with the
-    //             // `debug_log` layer, producing a new `Layered` layer.
-    //             // Add a filter to *both* layers that rejects spans and
-    //             // events whose targets start with `metrics`.
-    //             .with_filter(filter::filter_fn(|metadata| {
-    //                 !metadata.target().starts_with("metrics")
-    //             }))
-    //             .and_then(log_layer)
-    //     )
-    //     .init();
+    tracing_subscriber::registry()
+        .with(env_layer)
+        .with(stdout_layer)
+        .with(file_layer)
+        .init();
 }
