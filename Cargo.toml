@@ -11,10 +11,15 @@ bb8 = "0.8"
 bb8-redis = "0.13"
 chrono = { version = "0.4" }
 dotenvy = "0.15"
-tokio = { version = "1", features = ['full'] }
+futures-util = "0.3.28"
+jsonwebtoken = "8.3.0"
+lazy_static = "1.4.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1" }
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "json"] }
+tokio = { version = "1", features = ['full'] }
+tower = "0.4.13"
+tower-http = {version = "0.4", features = ["cors", "trace"]}
 thiserror = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

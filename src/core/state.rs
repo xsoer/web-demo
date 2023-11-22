@@ -14,3 +14,8 @@ pub async fn init_state() -> AppState {
         redis_pool
     }
 }
+
+
+pub struct ReqContext {
+    pub user_id: String
+}

@@ -5,7 +5,7 @@ use axum::Json;
 
 use crate::util::error::LibError;
 
-pub type LibResult<T> = std::result::Result<T, LibError>;
+
 
 #[derive(Serialize)]
 pub struct Resp200<T>
@@ -32,10 +32,10 @@ impl<T> Resp200<T>
 
 
 #[derive(Serialize)]
-struct ErrorResponse {
-    code: i32,
-    msg: String,
-    data: String,
+pub struct ErrorResponse {
+    pub code: i32,
+    pub msg: String,
+    pub data: String,
 }
 
 impl LibError {
@@ -46,12 +46,13 @@ impl LibError {
     }
     fn status_code(&self) -> StatusCode {
         match self {
-            LibError::BadEnv(_)
-            | LibError::SqlError(_)
-            | LibError::FormatError(_)
-            | LibError::ParseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-
             LibError::ParamsErr(_) => StatusCode::BAD_REQUEST,
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+            // LibError::BadEnv(_)
+            // | LibError::SqlError(_)
+            // | LibError::FormatError(_)
+            // | LibError::ParseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+
         }
     }
 }

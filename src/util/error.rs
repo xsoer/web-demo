@@ -16,4 +16,7 @@ pub enum LibError {
 
     #[error("params error: {0}")]
     ParamsErr(String),
+
+    #[error("JWT token error: {0}")]
+    JWTokenErr(#[from] jsonwebtoken::errors::Error),
 }

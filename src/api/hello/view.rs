@@ -2,7 +2,8 @@ use axum::extract::{Path, State, Json};
 use axum::response::IntoResponse;
 
 use crate::core::state::AppState;
-use crate::util::{resp::{LibResult, Resp200}, error::LibError};
+use crate::util::{resp::Resp200, error::LibError};
+use crate::util::LibResult;
 use super::schema;
 
 pub async fn hello() -> LibResult<impl IntoResponse> {

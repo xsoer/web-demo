@@ -22,7 +22,7 @@ pub fn init() {
     let err_file = rolling::daily("log", "error").with_max_level(Level::ERROR);
     let all_files = info_file.and(err_file);
 
-    let env_layer = EnvFilter::from_default_env().add_directive(Level::TRACE.into());
+    let env_layer = EnvFilter::from_default_env().add_directive(Level::INFO.into());
     let stdout_layer = tracing_subscriber::fmt::layer()
         .pretty()
         .with_timer(LocalTimer);
